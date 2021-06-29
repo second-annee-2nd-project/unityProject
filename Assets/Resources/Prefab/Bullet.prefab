@@ -109,7 +109,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5d981a327e8f4341a8f62097e9f7451, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damage: 2
+  bulletType: 0
   speed: 300
+  isSeekingBullet: 0
+  target: {fileID: 0}
 --- !u!54 &6721170225538511081
 Rigidbody:
   m_ObjectHideFlags: 0

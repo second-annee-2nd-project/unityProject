@@ -1,14 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class EnemiesManager : MonoBehaviour
 {
     [SerializeField] private float delayBeforeFirstSpawn;
     [SerializeField] private float delayBetweenSpawns;
-    [SerializeField] private int totalEnemies;
     [SerializeField] private GameObject enemyPrefab;
     [SerializeField] private GameObject container;
+    [SerializeField] private List<Spawner> spawners;
 
     private List<GameObject> targets;
     public List<GameObject> Targets => targets;
@@ -17,14 +18,17 @@ public class EnemiesManager : MonoBehaviour
     
     private int enemiesLeftToSpawn;
     private List<GameObject> aliveEnemies;
-
     private Coroutine cor;
-    
+    [Space()] [Header("Size = total wave number")]
+   [SerializeField] private List<WaveManager> waveManager;
+
     void Start()
     {
         aliveEnemies = new List<GameObject>();
         if (container == null) GameObject.Find("EnemyContainer");
         // StartCoroutine(nameof(StartWave));
+        ShopManager.Instance.NumberOfWaves = waveManager.Count;
+
     }
 
     public void StartWaveSequence()
@@ -36,7 +40,7 @@ public class EnemiesManager : MonoBehaviour
     // Commence une vague et spawn des ennemis
     IEnumerator StartWave()
     {
-        enemiesLeftToSpawn = totalEnemies;
+        enemiesLeftToSpawn = waveManager[ShopManager.Instance.ActualWaveNumber-1].EnemyNumberToSpawn;
         GetTargets();
         yield return new WaitForSeconds(delayBeforeFirstSpawn);
         while (!isWaveFinished())
@@ -45,8 +49,8 @@ public class EnemiesManager : MonoBehaviour
             {
                 if (timerBeforeNextSpawn <= 0f)
                 {
-                    GameObject enemy = Instantiate(enemyPrefab,
-                        new Vector3(transform.position.x, 0, transform.position.z), Quaternion.identity);
+                    GameObject enemy = Instantiate(waveManager[ShopManager.Instance.ActualWaveNumber-1].TypeOfEnemyToSpawn,
+                        new Vector3(waveManager[ShopManager.Instance.ActualWaveNumber-1].SpawnerPos.position.x, 0,waveManager[ShopManager.Instance.ActualWaveNumber-1].SpawnerPos.position.z), Quaternion.identity);
                     enemy.transform.parent = container.transform;
                     aliveEnemies.Add(enemy);
 
@@ -80,6 +84,24 @@ public class EnemiesManager : MonoBehaviour
     private void GetTargets()
     {
         targets = new List<GameObject>(GameObject.FindGameObjectsWithTag("Turret"));
+    }
+
+    public Transform GetNearestTarget(Vector3 pos)
+    {
+        if (aliveEnemies.Count <= 0) return null;
+        Transform nearest = aliveEnemies[0].transform;
+        float minSqrDist = (nearest.position - pos).sqrMagnitude;
+        for (int i = 1; i < aliveEnemies.Count; i++)
+        {
+            float sqrDist = (aliveEnemies[i].transform.position - pos).sqrMagnitude;
+            if (minSqrDist > sqrDist)
+            {
+                nearest = aliveEnemies[i].transform;
+                minSqrDist = sqrDist;
+            }
+        }
+
+        return nearest;
     }
     
     /*public List<GameObject>()

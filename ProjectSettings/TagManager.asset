@@ -9,6 +9,10 @@ TagManager:
   - Bullet
   - Enemy
   - Spawner
+  - TurretManager
+  - CoinsLoot
+  - BulletEnemy
+  - Boundaries
   layers:
   - Default
   - TransparentFX

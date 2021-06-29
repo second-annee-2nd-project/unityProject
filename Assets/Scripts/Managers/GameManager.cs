@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour
     public ShopManager P_ShopManager => shopManager;
     private EnemiesManager enemiesManager;
     public EnemiesManager P_EnemiesManager => enemiesManager;
+    private CameraController cc;
 
     private void Awake()
     {
@@ -45,6 +46,7 @@ public class GameManager : MonoBehaviour
         actualGrid = FindObjectOfType<Grid>();
         shopManager = FindObjectOfType<ShopManager>();
         enemiesManager = FindObjectOfType<EnemiesManager>();
+        cc = FindObjectOfType<CameraController>();
 
         StartGame();
     }
@@ -52,10 +54,12 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
        /* */
+     
     }
 
     private void StartGame()
     {
+        cc.Init();
         ChangePhase(GameStateEnum.Shop);
 
         //

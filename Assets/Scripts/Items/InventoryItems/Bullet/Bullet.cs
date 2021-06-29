@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+public class Bullet : TeamUnit
 {
     private BulletsPool bulletsPool;
     private Rigidbody rb;
@@ -57,29 +57,6 @@ public class Bullet : MonoBehaviour
         target = _target;
     }
     
-    void Update()
-    {
-       /* if (isSeekingBullet)
-        {
-            
-            /*if (target != null)
-            {
-                lastPosition = target.position;
-            }
-
-            Vector3 dir = target.position - transform.position;
-            float distanceThisFrame = speed * Time.deltaTime;
-
-            if (dir.magnitude <= distanceThisFrame)
-            {
-                return;
-            }
-
-            transform.Translate(dir.normalized * distanceThisFrame, Space.World);
-            //Shoot(dir.normalized);
-        }*/
-       
-    }
     void UpdateTarget()
     {
         GameObject[] ennemies = GameObject.FindGameObjectsWithTag("Enemy");
@@ -109,7 +86,8 @@ public class Bullet : MonoBehaviour
 
     private void DestroyBullet()
     {
-            bulletsPool.ReleaseBulletInstance(gameObject, bulletType);
+        Team = eTeam.neutral;
+        bulletsPool.ReleaseBulletInstance(gameObject, bulletType);
     }
     public void Shoot(Vector3 direction)
     {
@@ -128,15 +106,19 @@ public class Bullet : MonoBehaviour
     private IEnumerator DestroyOnMaxRange()
     {
         range = maxRange;
+        Vector3 lastPos = Vector3.zero;
         if (isSeekingBullet)
         {
-            while (range > 0f && target != null)
+            while (range > 0f)
             {
+                if(target != null)
+                    lastPos = target.transform.position;
+                
                 range -= speed * Time.deltaTime;
-                    Vector3 dir = target.position - transform.position;
-                    float distanceThisFrame = speed * Time.deltaTime;
+                Vector3 dir = lastPos - transform.position;
+                float distanceThisFrame = speed * Time.deltaTime;
 
-                    transform.Translate(dir.normalized * distanceThisFrame, Space.World);
+                transform.Translate(dir.normalized * distanceThisFrame, Space.World);
 
                 yield return null;
             }
@@ -160,8 +142,17 @@ public class Bullet : MonoBehaviour
     private void OnTriggerEnter(Collider col)
     {
         // S'il ne faut pas détruire en fonction de ce que la balle touche
-        if (col.tag == "Bullet") return;
-        DestroyBullet();
+        if (col.tag == "Bullet" || col.tag == "CoinsLoot") return;
+        DestroyableUnit du = col.GetComponent<DestroyableUnit>();
+        if (du)
+        {
+            if (du.Team != this.Team)
+            {
+                du.GetDamaged(damage);
+                DestroyBullet();
+            }
+        }
+        
         
     }
     

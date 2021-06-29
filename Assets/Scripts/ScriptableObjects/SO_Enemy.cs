@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName ="Enemy", menuName = "Destroyable/Movable", order = 2)]
+[CreateAssetMenu(fileName ="Enemy", menuName = "ScriptableObjects/Destroyable/Movable/Enemy", order = 2)]
 public class SO_Enemy : SO_Character
 {
     // Start is called before the first frame update

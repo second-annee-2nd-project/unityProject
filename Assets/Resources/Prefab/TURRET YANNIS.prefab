@@ -46,7 +46,7 @@ GameObject:
   - component: {fileID: 8985155240517371903}
   m_Layer: 0
   m_Name: TURRET YANNIS
-  m_TagString: Untagged
+  m_TagString: Turret
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -141,11 +141,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  range: 500
   partToRotate: {fileID: 8595243058252061291}
   weapon: {fileID: 8985155240517371903}
   firePoint: {fileID: 8595243058252061291}
-  price: 0
+  soTurret: {fileID: 11400000, guid: 366cdf396b490184985c0695b3f81bce, type: 2}
+  turretManager: {fileID: 0}
 --- !u!114 &8985155240517371903
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -164,7 +164,7 @@ MonoBehaviour:
   bNumberOfBullets: 1
   bDiffusionAngle: 0
   bDamage: 1
-  bRange: 1000
+  bRange: 10
   firePosition: {fileID: 8595243058252061291}
   bulletPrefab: {fileID: 7497547957538424816, guid: 4d8d5547bfb105843b7600b15e9b8501, type: 3}
   bulletsPool: {fileID: 0}

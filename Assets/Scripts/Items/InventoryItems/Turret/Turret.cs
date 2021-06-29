@@ -5,22 +5,22 @@ using UnityEngine;
 public class Turret : MonoBehaviour
 {
     [SerializeField] private Transform target;
-    [SerializeField] private float range = 10f;
-
+   
     [SerializeField] private Transform partToRotate;
-
-    private float turnSpeed = 5f;
-
     [SerializeField] private Weapon weapon;
+    private float health;
 
     //[SerializeField] private GameObject turretPrefab;
    //[SerializeField] private GameObject bulletPrefab;
    [SerializeField] private Transform firePoint;
-   [SerializeField] private int price;
-
-    private void Start()
+   [SerializeField] private SO_Turret soTurret;
+   public SO_Turret SoTurret => soTurret;
+   [SerializeField] private TurretManager turretManager;
+   private void Start()
     {
        // InvokeRepeating("UpdateTarget", 0f, 0.5f);
+       turretManager = FindObjectOfType<TurretManager>();
+       health = soTurret.HealthPoints;
     }
 
     void UpdateTarget()
@@ -42,7 +42,7 @@ public class Turret : MonoBehaviour
 
         }
 
-        if (nearestEnemy != null && shortsDistance <= range)
+        if (nearestEnemy != null && shortsDistance <= soTurret.Range)
         {
             target = nearestEnemy.transform;
         }
@@ -62,7 +62,7 @@ public class Turret : MonoBehaviour
             
         Vector3 dir = target.position - transform.position;
         Quaternion lookRotation = Quaternion.LookRotation(dir);
-        Vector3 rotation = Quaternion.Lerp(partToRotate.rotation, lookRotation, Time.deltaTime * turnSpeed).eulerAngles;
+        Vector3 rotation = Quaternion.Lerp(partToRotate.rotation, lookRotation, Time.deltaTime * soTurret.TurnSpeed).eulerAngles;
         partToRotate.rotation = Quaternion.Euler(0f, rotation.y, 0f);
         if(weapon.CanShoot())
             Shoot(dir, target);
@@ -81,4 +81,19 @@ public class Turret : MonoBehaviour
         weapon.Shoot(direction, _target);
     }
 
+    public void TakeDamage(float amount)
+    {
+        health-= amount;
+       TurretDeath();
+    }
+
+    void TurretDeath()
+    {
+        if (health<= 0)
+        {
+            turretManager.turretList.Remove(transform);
+            Destroy(gameObject);
+        }
+    }
+    
 }

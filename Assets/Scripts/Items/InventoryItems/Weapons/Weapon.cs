@@ -44,6 +44,13 @@ public class Weapon : MonoBehaviour
     [SerializeField]  private Transform firePosition;
     [SerializeField]  private GameObject bulletPrefab;
     [SerializeField] private BulletsPool bulletsPool;
+    private eTeam team;
+
+    public eTeam Team
+    {
+        get => team;
+        set => team = value;
+    }
 
     private Bullet bulletPrefabScript;
    

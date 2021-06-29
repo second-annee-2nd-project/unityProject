@@ -21,6 +21,7 @@ public class Grid : MonoBehaviour
     [SerializeField] private int gridSizeHeight;
 
     [SerializeField] private Vector3 centerPosition;
+    public Vector3 CenterPosition => centerPosition;
 
     public LayerMask unwalkableMask;
 

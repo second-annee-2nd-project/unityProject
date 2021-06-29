@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName ="Weapon", menuName = "Destroyable/Movable", order = 1)]
+[CreateAssetMenu(fileName ="Weapon", menuName = "ScriptableObjects/Destroyable/Movable/Main Character", order = 1)]
 public class SO_Character : SO_Destroyable
 {
     [SerializeField] private float speed;

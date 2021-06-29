@@ -30,21 +30,33 @@ public class ShopManager : MonoBehaviour
     [SerializeField] private float baseShopTimer;
     private float shopTimer;
 
-
+    [SerializeField] private Text waveText;
+    [SerializeField] private Text coinsText;
     [SerializeField] private Text shopText;
     [SerializeField] private int numberOfWaves;
-
+    public int NumberOfWaves
+    {
+        get => numberOfWaves;
+        set => numberOfWaves = value;
+    }
+    [SerializeField] private int actualWaveNumber;
+    public int ActualWaveNumber => actualWaveNumber;
+    [SerializeField] private int bCoins;
     [SerializeField] private GameObject turretPrefab;
     private GameObject equipedPrefab;
+    [SerializeField] private Turret turret;
 
     public GameObject EquipedPrefab
     {
         get => equipedPrefab;
         set => equipedPrefab = value;
     }
+    private TurretManager turretManager;
 
     private void Awake()
     {
+        turretManager = GameObject.FindObjectOfType<TurretManager>().GetComponent<TurretManager>();
+        coins = bCoins;
         if (instance == null)
         {
             instance = this;
@@ -52,6 +64,10 @@ public class ShopManager : MonoBehaviour
         }
     }
 
+    void Update()
+    {
+        coinsText.text = " : " + coins;
+    }
     public void StartShopSequence()
     {
         if (cor == null)
@@ -68,29 +84,31 @@ public class ShopManager : MonoBehaviour
         // Permettre de poser une tourelle
         // TOUT CA SOUS UN TIMER DE 30s
         
-        shopTimer = baseShopTimer;
-        shopText.text = shopTimer.ToString();
         uiShopSequence.SetActive(true);
+        shopTimer = baseShopTimer;
+        actualWaveNumber += 1;
+        waveText.text = "wave " + actualWaveNumber + "/" + numberOfWaves;
         while (shopTimer > 0f)
         {
             shopTimer -= Time.deltaTime;
-            shopText.text = shopTimer.ToString();
-            if (Input.GetMouseButtonDown(1))
-            {
-                //txt.text = "Placing turret";
-                StartPlacingTurret();
-            }
+            shopText.text = "Phase de préparation,posez des tourelles\n"+(int)shopTimer;
+            // if (Input.GetMouseButtonDown(1))
+            // {
+            //     //txt.text = "Placing turret";
+            //     StartPlacingTurret();
+            // }
             yield return null;
         }
         
         uiShopSequence.SetActive(false);
+        turretManager.GetTurrets();
         cor = null;
         GameManager.Instance.ChangePhase(GameStateEnum.Wave);
     }
 
     public void StartPlacingTurret()
     {
-        if (placingCor == null)
+        if (placingCor ==  null && coins >= turret.SoTurret.Price)
         {
             placingCor = StartCoroutine(PlaceTurret());
         }
@@ -148,11 +166,10 @@ public class ShopManager : MonoBehaviour
                         //new Vector3(n.position.x, n.position.y, n.position.z), Quaternion.identity);
                         // Déployer une tourelle
                         equipedPrefab = null;
-                        
+                        coins -= turret.SoTurret.Price;
                         //selected.material = oldMat;
                         //selected.material.color = oldColor;
                         //selected = null;
-                        coins--;
                         n.isWalkable = false;
                         n.isTurretable = false;
                         
